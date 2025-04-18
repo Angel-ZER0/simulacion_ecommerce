@@ -343,12 +343,14 @@ public class InventarioBackendBaseDeDatosApplication implements CommandLineRunne
 		}
 		
 		if (repoEstadoEntrega.count() == 0) {
-			
+
 			repoEstadoEntrega.save(new EntidadEstadoEntregaOrden("en camino"));
 			repoEstadoEntrega.save(new EntidadEstadoEntregaOrden("entregado"));
 			repoEstadoEntrega.save(new EntidadEstadoEntregaOrden("entrega inatendida"));
 			repoEstadoEntrega.save(new EntidadEstadoEntregaOrden("denegado"));
 			repoEstadoEntrega.save(new EntidadEstadoEntregaOrden("extraviado"));
+			repoEstadoEntrega.save(new EntidadEstadoEntregaOrden("falto de pagp"));
+			
 		}
 		
 		if (repoDirecciones.count() == 0) {

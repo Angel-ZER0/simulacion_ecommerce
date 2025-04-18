@@ -102,9 +102,10 @@ public class EntidadHistorialOrdenes {
     
     public void actualizarEstadoOrden(EntidadEstadoPagoOrden estadoPago) {
     	
-    	if (estadoPago.getId() == 5L) {
+    	if (estadoPago != null) {
     		
     		this.activa = false;
+    		this.estadoTransaccion = estadoPago;
     		this.fechaFiniquitpOrden = LocalDateTime.now();
     		
     	} 

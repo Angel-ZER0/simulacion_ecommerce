@@ -633,7 +633,9 @@ public class ImplementacionServiciosClientes implements InterfazServiciosCliente
 			
 			if (saldoTarjeta.getSaldoDisponible().compareTo(ordenActiva.getTotalAPagar()) < 0) {
 				
-				throw new ExcepcionEnElPago("Ocurrió un error con el pago, faltan fondos en el monedero para realizar la trasancción");
+				ordenActiva.actualizarEstadoOrden(repoEstadoPago.getReferenceById(3L));
+				ordenActiva.setEstadoPaquete(repoEstadoEntrega.getReferenceById(6L));
+				return ResponseEntity.status(HttpStatus.CONFLICT).body("Ocurrió un error con el pago, faltan fondos en el monedero para realizar la trasancción");
 				
 			}
 			
@@ -641,7 +643,6 @@ public class ImplementacionServiciosClientes implements InterfazServiciosCliente
 			
 			EntidadEstadoPagoOrden estadoPago = repoEstadoPago.findById(5L).get();
 			
-			ordenActiva.setEstadoTransaccion(estadoPago);
 			servActCantProducto.actualizarInventario(ordenActiva);
 			ordenActiva.actualizarEstadoOrden(estadoPago);
 			EntidadEnvios nuevoEnvio = repoEnvios.save(new EntidadEnvios(direccionCliente, listaSucursales,
