@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 import angel_zero.inventario.historialOrdenes.DTOCompraRealizada;
 import angel_zero.inventario.historialOrdenes.DTOConfirmacionVaciarCarrito;
+import angel_zero.inventario.historialOrdenes.DTOEstadoABuscar;
 import angel_zero.inventario.historialOrdenes.DTOMontoTotalCarrito;
 import angel_zero.inventario.historialOrdenes.EntidadHistorialOrdenes;
 import angel_zero.inventario.ordenesProductos.DTOMostrarOrden;
@@ -27,7 +28,7 @@ public interface InterfazServiciosClientes {
 	
 	public ResponseEntity eliminarOrdenCompleta(DTOConfirmacionVaciarCarrito confirmacion);
 	
-	public ResponseEntity <Page<DTOCompraRealizada>> comprasRealizadas(Pageable paginacion);
+	public ResponseEntity <Page<DTOCompraRealizada>> comprasRealizadas(Pageable paginacion, DTOEstadoABuscar estado);
 	
 	public ResponseEntity registrarMetodoPago(DTORegistarMetodoPago registrarMetodoPago);
 	
