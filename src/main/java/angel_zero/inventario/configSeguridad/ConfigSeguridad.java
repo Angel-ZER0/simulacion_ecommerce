@@ -23,9 +23,10 @@ public class ConfigSeguridad {
 
 	private final FiltroSeguridad filtro;
 	
-	private static final String [] URLS_PUBLICAS = {"/clientes/accesar", "/clientes/registrar", 
+	private static final String [] URLS_PUBLICAS_ACCESO = {"/clientes/accesar", "/clientes/registrar", 
 			"/proveedor/registro-empresa", "/proveedor/acceso-proveedor", "/administracion/registrar-administrador",
 			"/administracion/inicio-sesion"};
+	//private static final String [] URLS_PRODUCTOS = {"/productos", "/productos/buscar"};
 	private static final String [] ADM_PRO = {"administrador", "proovedor"};
 	
 	@Bean
@@ -34,7 +35,9 @@ public class ConfigSeguridad {
 		return httpSecurity.csrf(csrf -> csrf.disable())
 				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers(HttpMethod.POST, URLS_PUBLICAS).permitAll()
+						.requestMatchers(HttpMethod.POST, URLS_PUBLICAS_ACCESO).permitAll()
+						.requestMatchers(HttpMethod.GET, "/productos").permitAll()
+						.requestMatchers(HttpMethod.POST, "/productos/buscar").permitAll()
 						.requestMatchers(HttpMethod.GET, "/").permitAll()
 						.anyRequest().authenticated())
 				.addFilterBefore(filtro, UsernamePasswordAuthenticationFilter.class).build();
