@@ -62,7 +62,7 @@ public class ControladorClientes {
 		
 	}
 	
-	@PostMapping("/eliminar-todos-los-productos-del-carrito")
+	@PostMapping("/carrito-de-compras/eliminar")
 	public ResponseEntity elimnarProductosCarrito(@RequestBody DTOConfirmacionVaciarCarrito confirmacion) {
 		
 		return servicioClientes.eliminarOrdenCompleta(confirmacion);
