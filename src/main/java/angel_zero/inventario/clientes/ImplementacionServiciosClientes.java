@@ -16,6 +16,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,7 @@ import angel_zero.inventario.direcciones.RepositorioEstados;
 import angel_zero.inventario.direcciones.RepositorioMunicipiosAlcaldias;
 import angel_zero.inventario.historialOrdenes.DTOCompraRealizada;
 import angel_zero.inventario.historialOrdenes.DTOConfirmacionVaciarCarrito;
+import angel_zero.inventario.historialOrdenes.DTOEstadoABuscar;
 import angel_zero.inventario.historialOrdenes.DTOMontoTotalCarrito;
 import angel_zero.inventario.historialOrdenes.EntidadEstadoPagoOrden;
 import angel_zero.inventario.historialOrdenes.EntidadHistorialOrdenes;
@@ -300,10 +302,29 @@ public class ImplementacionServiciosClientes implements InterfazServiciosCliente
 
 	
 	@Override
-	public ResponseEntity<Page<DTOCompraRealizada>> comprasRealizadas(Pageable paginacion) {
+	public ResponseEntity<Page<DTOCompraRealizada>> comprasRealizadas(Pageable paginacion, DTOEstadoABuscar estado) {
 		
 		EntidadClientes cliente = (EntidadClientes) servSelecUsuario.obtenerEntidadRelacionada();
-		return ResponseEntity.ok(repoHistorial.listaDeComprasRealizadas(cliente, paginacion).map(DTOCompraRealizada::new));
+		
+		EntidadEstadoPagoOrden estadoBuscado;
+		
+		if (estado.estado() == null) {
+			
+			 estadoBuscado = repoEstadoPago.findByEstado("finalizado");
+			
+		} else {
+			
+			estadoBuscado = repoEstadoPago.findByEstado(estado.estado());
+			
+			if (estadoBuscado == null) {
+				
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+				
+			}
+			
+		}
+		
+		return ResponseEntity.ok(repoHistorial.productosEnOrdenesAnteriores(cliente, estadoBuscado, paginacion).map(DTOCompraRealizada::new));
 		
 	}
 
