@@ -63,12 +63,12 @@ public class InventarioBackendBaseDeDatosApplication implements CommandLineRunne
 
 	public static void main(String[] args) {
 		SpringApplication.run(InventarioBackendBaseDeDatosApplication.class, args);
-		
+		/*
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerSubtypes(DTOCuentaPayPal.class, DTODatosTarjeta.class);
 
 		String json = "{ \"propietarioMetodo\": \"Ana López\", \"calleFacturacion\": \"Calle 456\", \"tipoPago\": \"PAYPAL\", \"email\": \"ana.paypal@email.com\" }";
-
+		 
 		DTORegistarMetodoPago metodoPago;
 		try {
 			metodoPago = mapper.readValue(json, DTORegistarMetodoPago.class);
@@ -77,7 +77,7 @@ public class InventarioBackendBaseDeDatosApplication implements CommandLineRunne
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		*/
 		
 	}
 
@@ -349,7 +349,7 @@ public class InventarioBackendBaseDeDatosApplication implements CommandLineRunne
 			repoEstadoEntrega.save(new EntidadEstadoEntregaOrden("entrega inatendida"));
 			repoEstadoEntrega.save(new EntidadEstadoEntregaOrden("denegado"));
 			repoEstadoEntrega.save(new EntidadEstadoEntregaOrden("extraviado"));
-			repoEstadoEntrega.save(new EntidadEstadoEntregaOrden("falto de pagp"));
+			repoEstadoEntrega.save(new EntidadEstadoEntregaOrden("falto de pago"));
 			
 		}
 		
