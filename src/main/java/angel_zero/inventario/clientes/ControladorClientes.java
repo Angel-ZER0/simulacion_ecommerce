@@ -20,6 +20,7 @@ import angel_zero.inventario.direcciones.DTORegistrarDireccion;
 import angel_zero.inventario.direcciones.ImpServDirecciones;
 import angel_zero.inventario.historialOrdenes.DTOCompraRealizada;
 import angel_zero.inventario.historialOrdenes.DTOConfirmacionVaciarCarrito;
+import angel_zero.inventario.historialOrdenes.DTOEstadoABuscar;
 import angel_zero.inventario.historialOrdenes.DTOMontoTotalCarrito;
 import angel_zero.inventario.ordenesProductos.DTOMostrarOrden;
 import angel_zero.inventario.pagos.DTORegistarMetodoPago;
@@ -83,9 +84,9 @@ public class ControladorClientes {
 	}
 	
 	@GetMapping("/lista-de-compras-realizadas")
-	public ResponseEntity<Page<DTOCompraRealizada>> comprasRealizadas(Pageable paginacion) {
+	public ResponseEntity<Page<DTOCompraRealizada>> comprasRealizadas(Pageable paginacion, @RequestBody DTOEstadoABuscar estado) {
 		
-		return servicioClientes.comprasRealizadas(paginacion);
+		return servicioClientes.comprasRealizadas(paginacion, estado);
 		
 	}
 	
