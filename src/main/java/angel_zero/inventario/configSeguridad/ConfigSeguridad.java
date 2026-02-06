@@ -24,8 +24,9 @@ public class ConfigSeguridad {
 	private final FiltroSeguridad filtro;
 	
 	private static final String [] URLS_PUBLICAS_ACCESO = {"/clientes/accesar", "/clientes/registrar", 
-			"/proveedor/registro-empresa", "/proveedor/acceso-proveedor", "/administracion/registrar-administrador",
-			"/administracion/inicio-sesion"};
+			"/proveedor/registro-empresa", "/proveedor/acceso-proveedor", "/administracion/inicio-sesion"};
+	private static final String [] URLS_ADMINS = {"/administracion/registrar-administrador",
+			"/soporte/administracion/inicio-sesion"};
 	//private static final String [] URLS_PRODUCTOS = {"/productos", "/productos/buscar"};
 	private static final String [] ADM_PRO = {"administrador", "proovedor"};
 	
@@ -38,7 +39,7 @@ public class ConfigSeguridad {
 						.requestMatchers(HttpMethod.POST, URLS_PUBLICAS_ACCESO).permitAll()
 						.requestMatchers(HttpMethod.GET, "/productos").permitAll()
 						.requestMatchers(HttpMethod.POST, "/productos/buscar").permitAll()
-						.requestMatchers(HttpMethod.GET, "/").permitAll()
+						.requestMatchers(HttpMethod.POST, URLS_ADMINS).hasRole("administrador")					.requestMatchers(HttpMethod.GET, "/").permitAll()
 						.anyRequest().authenticated())
 				.addFilterBefore(filtro, UsernamePasswordAuthenticationFilter.class).build();
 				
