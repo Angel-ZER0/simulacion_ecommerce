@@ -16,6 +16,8 @@ import angel_zero.inventario.categoria.DTOInformacionCategoria;
 import angel_zero.inventario.categoria.DTONuevaCategoria;
 import angel_zero.inventario.credencialesAcceso.DTOCredencialesAcceso;
 import angel_zero.inventario.credencialesAcceso.ServicioAccesoUsuarios;
+import angel_zero.inventario.ordenesProductos.DTODatosEnvio;
+import angel_zero.inventario.ordenesProductos.FiltroBusquedaEnvios;
 import angel_zero.inventario.rolesPermisos.ImpServRolesUsuarios;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -74,4 +76,10 @@ public class ControladorAdmins {
 		
 	}
 	
+	@PostMapping("/buscar-paquete")
+	ResponseEntity <Page<DTODatosEnvio>> localizarPaquete (@RequestBody @Valid FiltroBusquedaEnvios filtro, Pageable paginacion) {
+		
+		return servicioAdmins.localizarPaquete(filtro, paginacion);
+		
+	}
 }

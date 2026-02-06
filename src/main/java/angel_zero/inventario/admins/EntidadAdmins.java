@@ -41,4 +41,9 @@ public class EntidadAdmins {
 		this.nombreUsuario = nuevoAdmin.nombreUsuario();
 	}
 	
+	public EntidadAdmins(String nombreUsuario) {
+		
+		this.nombreUsuario = nombreUsuario;
+		
+	}
 }
