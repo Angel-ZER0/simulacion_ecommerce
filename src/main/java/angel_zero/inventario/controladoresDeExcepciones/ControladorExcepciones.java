@@ -11,6 +11,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice()
 public class ControladorExcepciones {
+	
+	@ExceptionHandler(ExcepcionUsuario404.class)
+	public ResponseEntity<Map<String, Object>> manejarProductoNoEncontrado(ExcepcionUsuario404 ex) {
+		
+		Map <String, Object> respuesta = new HashMap<>();
+		respuesta.put("error", "No hay usuario registrado con ese correo.");
+		respuesta.put("timestamp", LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
+		
+	}
 
 	@ExceptionHandler(ExcepcionProducto404.class)
 	public ResponseEntity<Map<String, Object>> manejarProductoNoEncontrado(ExcepcionProducto404 ex) {
@@ -142,6 +152,26 @@ public class ControladorExcepciones {
 		respuesta.put("error", ex.getMessage());
 		respuesta.put("timestamp", LocalDateTime.now());
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(respuesta);
+		
+	}
+	
+	@ExceptionHandler(ExcepcionEnvio404.class)
+	public ResponseEntity <Map<String, Object>> menejarEnvioNoEncontrado(ExcepcionEnvio404 ex) {
+		
+		Map <String, Object> respuesta = new HashMap<>();
+		respuesta.put("error", ex.getMessage());
+		respuesta.put("timestamp", LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+		
+	}
+	
+	@ExceptionHandler(ExcepcionEstadoEntrega404.class)
+	public ResponseEntity <Map<String, Object>> manejarEstadoEntregaNoEncontrado(ExcepcionEstadoEntrega404 ex) {
+		
+		Map <String, Object> respuesta = new HashMap<>();
+		respuesta.put("error", "estado para la entrega no encontrado");
+		respuesta.put("timestamp", LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
 		
 	}
 	
