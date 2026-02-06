@@ -1,5 +1,9 @@
 package angel_zero.inventario;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +14,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import angel_zero.inventario.admins.EntidadAdmins;
+import angel_zero.inventario.admins.RepositorioAdmins;
 import angel_zero.inventario.categoria.EntidadCategoria;
 import angel_zero.inventario.categoria.RepositorioCategorias;
 import angel_zero.inventario.clientes.DTOCredenciales;
@@ -24,14 +30,23 @@ import angel_zero.inventario.direcciones.RepositorioEstados;
 import angel_zero.inventario.direcciones.RepositorioMunicipiosAlcaldias;
 import angel_zero.inventario.historialOrdenes.EntidadEstadoEntregaOrden;
 import angel_zero.inventario.historialOrdenes.EntidadEstadoPagoOrden;
+import angel_zero.inventario.historialOrdenes.EntidadHistorialOrdenes;
 import angel_zero.inventario.historialOrdenes.RepositorioEstadoEntrega;
 import angel_zero.inventario.historialOrdenes.RepositorioEstadoPago;
+import angel_zero.inventario.historialOrdenes.RepositorioHistorialOrdenes;
 import angel_zero.inventario.marcas.EntidadMarcas;
 import angel_zero.inventario.marcas.RepositorioMarcas;
+import angel_zero.inventario.ordenesProductos.EntidadOrdenesProductos;
+import angel_zero.inventario.ordenesProductos.RepositorioEnvios;
+import angel_zero.inventario.ordenesProductos.RepositorioOrdenesProductos;
 import angel_zero.inventario.pagos.DTOCuentaPayPal;
 import angel_zero.inventario.pagos.DTODatosTarjeta;
 import angel_zero.inventario.pagos.DTORegistarMetodoPago;
+import angel_zero.inventario.pagos.EntidadCuentaPayPal;
+import angel_zero.inventario.pagos.EntidadMetodosPago;
+import angel_zero.inventario.pagos.EntidadTarjetaPago;
 import angel_zero.inventario.pagos.EntidadTipoTarjeta;
+import angel_zero.inventario.pagos.RepositorioMetodosPago;
 import angel_zero.inventario.pagos.RepositorioTiposTarjeta;
 import angel_zero.inventario.productos.EntidadProductos;
 import angel_zero.inventario.productos.RepositorioProductos;
@@ -41,6 +56,7 @@ import angel_zero.inventario.rolesPermisos.EntidadRelacionRolesUsuarios;
 import angel_zero.inventario.rolesPermisos.EntidadRoles;
 import angel_zero.inventario.rolesPermisos.RepositorioRoles;
 import angel_zero.inventario.rolesPermisos.RepositorioRolesUsuarios;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @SpringBootApplication
@@ -48,6 +64,8 @@ import lombok.RequiredArgsConstructor;
 public class InventarioBackendBaseDeDatosApplication implements CommandLineRunner{
 	
 	private final RepositorioRoles repoRoles;
+	private final RepositorioAdmins repoAdmins;
+	private final RepositorioClientes repoClientes;
 	private final RepositorioProveedores repoProveedores;
 	private final RepositorioCategorias repoCategorias;
 	private final RepositorioMarcas repoMarcas;
@@ -58,8 +76,11 @@ public class InventarioBackendBaseDeDatosApplication implements CommandLineRunne
 	private final RepositorioEstadoPago repoEstadoPago;
 	private final RepositorioEstadoEntrega repoEstadoEntrega;
 	private final RepositorioDirecciones repoDirecciones;
-	private final RepositorioClientes repoClientes;
+	private final RepositorioMetodosPago repoMetodosPago;
 	private final RepositorioTiposTarjeta repoTiposTarjeta;
+	private final RepositorioOrdenesProductos repoOrdenes;
+	private final RepositorioHistorialOrdenes repoHistorialOrdenes;
+	private final RepositorioEnvios repoEnvios;
 
 	public static void main(String[] args) {
 		SpringApplication.run(InventarioBackendBaseDeDatosApplication.class, args);
@@ -82,6 +103,7 @@ public class InventarioBackendBaseDeDatosApplication implements CommandLineRunne
 	}
 
 	@Override
+	@Transactional
 	public void run(String... args) throws Exception {
 		
 		if (repoEstados.count() == 0) {
@@ -317,6 +339,20 @@ public class InventarioBackendBaseDeDatosApplication implements CommandLineRunne
 					"Saboris_SA@example.com", "$2a$10$zLjrZfYGlJeTp0zA0laANeGWLL.FvV2urmEVVWqBTWFBFDSg3bfiW"));
 		}
 		
+		if (repoAdmins.count() == 0) {
+			
+			List <EntidadRoles> rolesAdministrador = new ArrayList<EntidadRoles>();
+			rolesAdministrador.add(repoRoles.findByNombreRol("cliente"));
+			rolesAdministrador.add(repoRoles.findByNombreRol("proovedor"));
+			rolesAdministrador.add(repoRoles.findByNombreRol("administrador"));
+			
+			EntidadAdmins administrador = repoAdmins.save(new EntidadAdmins("superAdministrado"));
+			
+			repoRolUsu.save(new EntidadRelacionRolesUsuarios(administrador, rolesAdministrador,
+					"superadministradore@example.com", "$2a$10$.UYgcZuHE7muCbzoiAdDROPVC6ndwZgdI5kPAy5eFm6Sh6LA8Zk2S"));
+			
+		}
+		
 		if (repoClientes.count() == 0) {
 			
 			//DTORegistroNuevoCliente cliente = new DTORegistroNuevoCliente();
@@ -324,10 +360,19 @@ public class InventarioBackendBaseDeDatosApplication implements CommandLineRunne
 			List <EntidadRoles> rolesCliente = new ArrayList<EntidadRoles>();
 			rolesCliente.add(repoRoles.findByNombreRol("cliente"));
 			
-			EntidadClientes cliente = repoClientes.save(new EntidadClientes("Nathiel", "Drake", null, "46325792"));
-			
-			repoRolUsu.save(new EntidadRelacionRolesUsuarios(cliente, rolesCliente,
+			EntidadClientes cliente1 = repoClientes.save(new EntidadClientes("Nathiel", "Drake", null, "46325792"));
+			repoRolUsu.save(new EntidadRelacionRolesUsuarios(cliente1, rolesCliente,
 					"nathiel_drake@example.com", "$2a$10$2DQdLYb./zQ5V.Xp77dw5Oy3ORsPiDtWbbVxyw47rSsu0LHKIb/Wq"));
+			
+			EntidadClientes cliente2 = repoClientes.save(new EntidadClientes("Jin", "Sakai", null, "98651347"));
+			repoRolUsu.save(new EntidadRelacionRolesUsuarios(cliente2, rolesCliente,
+					"jin_sakai@example.com", "$2a$10$TEP.nY1ZH0l8u7v8t1svjuXyxMpWFjZ.ffy4lwDJ/qJkX5ID0upDu"));
+			
+			EntidadClientes cliente3 = repoClientes.save(new EntidadClientes("Limbo", "Lotus", null, "46852731"));
+			repoRolUsu.save(new EntidadRelacionRolesUsuarios(cliente3, rolesCliente,
+					"el_viajador@example.com", "$2a$10$rc2uDIMO8x5VKJhuPBc17e1xuxUEwDpMk4hNfkZb3tzpKt6DZAR9G"));
+			
+			
 			
 		}
 		
@@ -347,9 +392,10 @@ public class InventarioBackendBaseDeDatosApplication implements CommandLineRunne
 			repoEstadoEntrega.save(new EntidadEstadoEntregaOrden("en camino"));
 			repoEstadoEntrega.save(new EntidadEstadoEntregaOrden("entregado"));
 			repoEstadoEntrega.save(new EntidadEstadoEntregaOrden("entrega inatendida"));
-			repoEstadoEntrega.save(new EntidadEstadoEntregaOrden("denegado"));
+			repoEstadoEntrega.save(new EntidadEstadoEntregaOrden("no recibido"));
 			repoEstadoEntrega.save(new EntidadEstadoEntregaOrden("extraviado"));
 			repoEstadoEntrega.save(new EntidadEstadoEntregaOrden("falto de pago"));
+			repoEstadoEntrega.save(new EntidadEstadoEntregaOrden("cancelado"));
 			
 		}
 		
@@ -372,9 +418,15 @@ public class InventarioBackendBaseDeDatosApplication implements CommandLineRunne
 					repoMunicipiosAlcaldias.encontrarMunicipio("cuauh").get(), repoEstados.encontrarEstadoPorCadena("ciudad").get(),
 					null, "19.43463475267145", "-99.13188590833872", repoProveedores.findById(2L).get()));
 			
-			repoDirecciones.save(new EntidadDirecciones("Zapotitla 3", "San Juam", "16000", 
+			repoDirecciones.save(new EntidadDirecciones("Zapotitla 3", "San Juan", "16000", 
 					repoMunicipiosAlcaldias.encontrarMunicipio("xochi").get(), repoEstados.encontrarEstadoPorCadena("ciudad").get(),
 					null, "19.268284808213405", "-99.107825316211", true, repoClientes.findById(1L).get()));
+			repoDirecciones.save(new EntidadDirecciones("Juan Escutia", "Villa Luvianos", "51440", 
+					repoMunicipiosAlcaldias.encontrarMunicipio("Luvianos").get(), repoEstados.encontrarEstadoPorCadena("estado").get(),
+					null, "18.918411207425265", "-100.302125034343461", true, repoClientes.findById(2L).get()));
+			repoDirecciones.save(new EntidadDirecciones("Avenida Venustiano Carranza", "Cabecera Municipal", "56330", 
+					repoMunicipiosAlcaldias.encontrarMunicipio("Chima").get(), repoEstados.encontrarEstadoPorCadena("estado").get(),
+					null, "19.416240342228186", "-98.94124280919195", true, repoClientes.findById(3L).get()));
 
 		}
 		
@@ -382,6 +434,120 @@ public class InventarioBackendBaseDeDatosApplication implements CommandLineRunne
 			
 			repoTiposTarjeta.save(new EntidadTipoTarjeta("CRÉDITO"));
 			repoTiposTarjeta.save(new EntidadTipoTarjeta("DÉBITO"));
+		}
+		
+		if (repoMetodosPago.findAll().isEmpty()) {
+			
+			/*
+			EntidadClientes cliente = repoClientes.findById(1L).orElseThrow(
+					() -> new RuntimeException("No se encontró el usuaio"));
+			*/
+			
+			EntidadTipoTarjeta tarjetaCredito = repoTiposTarjeta.findById(1L).get();
+			EntidadTipoTarjeta tarjetaDebito = repoTiposTarjeta.findById(2L).get();
+			
+			repoMetodosPago.save(new EntidadTarjetaPago("Nathiel Dreake", "Zapotitla 3", repoClientes.findById(1L).get(), true,
+					"1647952346879510", "2033-08", "000", BigDecimal.valueOf(2000.5), tarjetaCredito));
+			repoMetodosPago.save(new EntidadTarjetaPago("Jin Sakai", "Juan Escutia", repoClientes.findById(2L).get(), true,
+					"9735846123456799", "2033-10", "777", BigDecimal.valueOf(1000.7), tarjetaDebito));
+			repoMetodosPago.save(new EntidadCuentaPayPal("el_viajador@example.com", "El viajador", repoClientes.findById(3L).get(), true));
+			
+			
+		}
+		
+		if (repoHistorialOrdenes.count() == 0) {
+			
+			/*
+			EntidadProductos producto1 = repoProductos.getReferenceById(1L);
+			EntidadProductos producto15 = repoProductos.getReferenceById(15L);
+			EntidadOrdenesProductos ordenProducto1 = repoOrdenes.save(new EntidadOrdenesProductos(producto1, 2));
+			EntidadOrdenesProductos ordenProducto2 = repoOrdenes.save(new EntidadOrdenesProductos(producto15, 3));
+			
+			List <EntidadOrdenesProductos> listaProducto = List.of(ordenProducto1, ordenProducto2);
+			*/
+			
+			for (int i = 1; i < 4; i++) {
+				
+				Long numeroProductoAleatorio1 = (long) (Math.random() * 20) + 1;
+				Long numeroProductoAleatorio2 = (long) (Math.random() * 20) + 1;
+				int cantidadAleatoriaProducto1 = (int) (Math.random() * 6 ) + 1;
+				int cantidadAleatoriaProducto2 = (int) (Math.random() * 6 ) + 1;
+				int numeroAleatorioDia = (int) (Math.random() * 30) + 1;
+				int horaAleatoriaDia = (int) (Math.random() * 14) + 9;
+				int minutoAleatorioDia = (int) (Math.random() * 59) + 1;
+				
+				String dia = "";
+				String hora = "";
+				String minuto = "";
+				
+				if (numeroAleatorioDia < 10) {
+					
+					dia = "0" + numeroAleatorioDia;
+					
+				} else {
+					
+					dia = String.valueOf(numeroAleatorioDia);
+					
+				}
+				
+				if (horaAleatoriaDia < 10) {
+					
+					hora = "0" + horaAleatoriaDia;
+					
+				} else {
+					
+					hora = String.valueOf(horaAleatoriaDia);
+					
+				}
+				
+				if (minutoAleatorioDia < 10) {
+					
+					minuto = "0" + minutoAleatorioDia;
+					
+				} else {
+					
+					minuto = String.valueOf(minutoAleatorioDia);
+					
+				}
+				
+				String fecha = "2025-06-" + dia + 
+						"T" + hora + ":" + minuto + ":00";
+				
+				LocalDateTime fechaOrden = LocalDateTime.parse(fecha);
+				
+				
+				
+				EntidadProductos producto1 = repoProductos.getReferenceById(numeroProductoAleatorio1);
+				EntidadProductos producto2 = repoProductos.getReferenceById(numeroProductoAleatorio2);
+				EntidadOrdenesProductos ordenProducto1 = repoOrdenes.save(new EntidadOrdenesProductos(producto1, cantidadAleatoriaProducto1));
+				EntidadOrdenesProductos ordenProducto2 = repoOrdenes.save(new EntidadOrdenesProductos(producto2, cantidadAleatoriaProducto2));
+				
+				List <EntidadOrdenesProductos> listaProducto = List.of(ordenProducto1, ordenProducto2);
+				
+				EntidadHistorialOrdenes orden = new EntidadHistorialOrdenes(); 
+				
+				orden.setFechaInicioOrden(fechaOrden);
+				orden.setFechaFiniquitpOrden(null);
+				orden.setOrdenCliente(repoClientes.findById((long) i).get());
+				orden.setActiva(true);
+				orden.setNumeroDeOrden(listaProducto);
+				orden.setTotalAPagar(orden.calcularTotalAPagar());
+				orden.setEstadoTransaccion(repoEstadoPago.getReferenceById(1L));
+				orden.setEstadoPaquete(null);
+				
+				repoHistorialOrdenes.save(orden);
+				
+				listaProducto.get(0).setIdOrdenHistorial(orden);
+				listaProducto.get(1).setIdOrdenHistorial(orden);
+				/*
+				ordenProducto1.setIdOrdenHistorial(primeraOrden);
+				ordenProducto2.setIdOrdenHistorial(primeraOrden);
+				*/
+				
+				
+			}
+			
+			
 		}
 		
 	}
