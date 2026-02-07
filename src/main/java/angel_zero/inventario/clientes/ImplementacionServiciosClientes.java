@@ -308,9 +308,11 @@ public class ImplementacionServiciosClientes implements InterfazServiciosCliente
 		
 		EntidadEstadoPagoOrden estadoBuscado;
 		
-		if (estado.estado() == null) {
+		if (estado.estado() == null || estado.estado() != "") {
 			
-			 estadoBuscado = repoEstadoPago.findByEstado("finalizado");
+			//estadoBuscado = repoEstadoPago.findByEstado("finalizado");
+			
+			return ResponseEntity.ok(repoHistorial.encontrarOrdenesCliente(paginacion, cliente).map((DTOCompraRealizada::new)));
 			
 		} else {
 			
@@ -567,6 +569,14 @@ public class ImplementacionServiciosClientes implements InterfazServiciosCliente
 			}
 		
 		//return ResponseEntity.ok("Algo malió sal " + estadoPago.toString());
+		
+	}
+	
+	@Override
+	public ResponseEntity cancelarOrden(Long idHistorialOrdenes) {
+		
+		
+		return null;
 		
 	}
 	
