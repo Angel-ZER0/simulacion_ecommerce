@@ -38,6 +38,8 @@ public interface InterfazServiciosClientes {
 	
 	public ResponseEntity realizarCompra(Long idDireccion);
 	
+	public ResponseEntity cancelarOrden(Long idHistorialOrdenes);
+	
 	public ResponseEntity verificarRequisitos();
 	
 	public ResponseEntity realizarCompraSeria();
