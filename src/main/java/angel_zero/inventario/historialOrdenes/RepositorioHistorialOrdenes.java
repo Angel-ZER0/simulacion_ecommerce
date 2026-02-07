@@ -39,4 +39,17 @@ public interface RepositorioHistorialOrdenes extends JpaRepository <EntidadHisto
 	Page <EntidadHistorialOrdenes> productosEnOrdenesAnteriores(EntidadClientes cliente, EntidadEstadoPagoOrden estado, 
 			Pageable paginacion);
 	
+	@Query("""
+		SELECT ho from EntidadHistorialOrdenes ho
+		WHERE ho.ordenCliente = :cliente
+		AND ho.estadoPaquete = :estado
+			""")
+	Page <EntidadHistorialOrdenes> encontrarOrdenesPorEstadoPaquete(Pageable paginacion, String estado, EntidadClientes cliente);
+	
+	@Query("""
+			SELECT ho from EntidadHistorialOrdenes ho
+			WHERE ho.ordenCliente = :cliente
+				""")
+	Page <EntidadHistorialOrdenes> encontrarOrdenesCliente(Pageable paginacion, EntidadClientes cliente);
+	
 }

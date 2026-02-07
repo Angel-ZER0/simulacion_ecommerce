@@ -1,5 +1,6 @@
 package angel_zero.inventario.ordenesProductos;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import angel_zero.inventario.direcciones.EntidadDirecciones;
@@ -49,12 +50,23 @@ public class EntidadEnvios {
 	@ManyToOne
 	@JoinColumn(nullable = false)
 	private EntidadEstadoEntregaOrden estadoPaquete;
+	
+	private LocalDateTime fechaEstimadaDeEntrega;
+	
+	private LocalDateTime fechaEntrega;
 
 	public EntidadEnvios(EntidadDirecciones direccionCliente, List<EntidadDirecciones> direccionesProveedores,
 			EntidadEstadoEntregaOrden estadoEntrega) {
 		this.direccionCliente = direccionCliente;
 		this.direccionesProveedores = direccionesProveedores;
 		this.estadoPaquete = estadoEntrega;
+		this.fechaEstimadaDeEntrega = LocalDateTime.now().plusDays(3);
+	}
+	
+	public void actualizarEstadoPaquete(EntidadEstadoEntregaOrden estadoPaquete) {
+		
+		this.estadoPaquete = estadoPaquete;
+		
 	}
 
 }

@@ -36,7 +36,7 @@ public class EntidadOrdenesProductos {
 	private EntidadProductos productoSolicitado;
 
 	@ManyToOne
-	@JoinColumn(name = "orden_id_historial", nullable = false)
+	@JoinColumn(name = "orden_id_historial", nullable = true)
 	private EntidadHistorialOrdenes idOrdenHistorial;
 
 	@Column(nullable = false)
@@ -66,6 +66,19 @@ public class EntidadOrdenesProductos {
 		this.productoSolicitado = producto;
 		this.cantidad = productoOrdenado.cantidad();
 		this.precio = BigDecimal.valueOf(producto.getPrecio() * productoOrdenado.cantidad());
+		
+	}
+
+	public EntidadOrdenesProductos(EntidadProductos productoSolicitado,
+			int cantidad) {
+		this.productoSolicitado = productoSolicitado;
+		this.cantidad = cantidad;
+		this.precio = BigDecimal.valueOf(productoSolicitado.getPrecio() * cantidad);
+	}
+	
+	public EntidadOrdenesProductos(EntidadHistorialOrdenes idHistorialOrden) {
+	
+		this.idOrdenHistorial = idHistorialOrden;
 		
 	}
 

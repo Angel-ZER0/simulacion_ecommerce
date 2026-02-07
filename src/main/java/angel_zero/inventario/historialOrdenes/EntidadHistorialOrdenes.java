@@ -58,7 +58,7 @@ public class EntidadHistorialOrdenes {
 	private EntidadEstadoPagoOrden estadoTransaccion;
 	
 	@ManyToOne()
-	@JoinColumn(name = "estado_paquete")
+	@JoinColumn(name = "estado_paquete", nullable = true)
 	private EntidadEstadoEntregaOrden estadoPaquete;
 
 	public EntidadHistorialOrdenes(EntidadClientes cliente) {
@@ -111,5 +111,19 @@ public class EntidadHistorialOrdenes {
     	} 
     	
     }
+
+	public EntidadHistorialOrdenes(LocalDateTime fechaInicioOrden,
+			EntidadClientes ordenCliente, boolean activa, 
+			List <EntidadOrdenesProductos> numeroDeOrden,
+			EntidadEstadoPagoOrden estadoTransaccion) {
+		this.fechaInicioOrden = fechaInicioOrden;
+		this.ordenCliente = ordenCliente;
+		this.totalAPagar = calcularTotalAPagar();
+		this.activa = activa;
+		this.numeroDeOrden = numeroDeOrden;
+		this.estadoTransaccion = estadoTransaccion;
+	}
+    
+    
 
 }
