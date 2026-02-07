@@ -38,7 +38,7 @@ public class ServSelecUsuario {
 
 		} else {
 
-			EntidadRelacionRolesUsuarios registro = repoRolUsu.findByCorreo(correo);
+			EntidadRelacionRolesUsuarios registro = repoRolUsu.findByCorreo(correo).get();
 
 			if (registro.getCliente() != null) {
 
