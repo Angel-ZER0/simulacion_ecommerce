@@ -65,7 +65,7 @@ public class ImpServRolesUsuarios implements IntServRolesUsuarios {
 			
 		} else {
 			
-			return ResponseEntity.status(HttpStatus.CONFLICT).body("No fue posible completar tu registro.");
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("No fue posible completar el registro.");
 			
 		}
 		

@@ -14,7 +14,7 @@ public interface RepositorioRolesUsuarios extends JpaRepository <EntidadRelacion
 	
 	boolean existsByCorreo(String correo);
 	
-	EntidadRelacionRolesUsuarios findByCorreo (String correo);
+	Optional <EntidadRelacionRolesUsuarios> findByCorreo (String correo);
 	 
 	//Optional <EntidadRelacionRolesUsuarios> findByUsername(String username);
 	
