@@ -48,6 +48,17 @@ public class EntidadTarjetaPago extends EntidadMetodosPago {
 		this.saldoDisponible = saldoDisponible;
 		this.tipoTarjeta = tipoTarjeta;
 	}
+	
+	public EntidadTarjetaPago(String propietarioMetodo, String calleFacturacionMetodo, EntidadClientes idCliente,
+			boolean metodoPreferido, String numerosTarjeta, String fechaExpiracion, String cvv,
+			BigDecimal saldoDisponible, EntidadTipoTarjeta tipoTarjeta) {
+		super(propietarioMetodo, calleFacturacionMetodo, idCliente, metodoPreferido);
+		this.numerosTarjeta = numerosTarjeta;
+		this.fechaExpiracion = YearMonth.parse(fechaExpiracion);
+		this.cvv = cvv;
+		this.saldoDisponible = saldoDisponible;
+		this.tipoTarjeta = tipoTarjeta;
+	}
 
 	@Override
 	public String getTipoPago() {

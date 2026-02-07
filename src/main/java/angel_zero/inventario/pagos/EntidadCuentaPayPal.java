@@ -27,10 +27,17 @@ public class EntidadCuentaPayPal extends EntidadMetodosPago {
 				idCliente, metodoPreferido);
 		this.emailCuentaPayPal = registrarMetodo.getEmail();
 	}
+	
+	public EntidadCuentaPayPal(String emailCuentaPayPal, String propietarioMetodo, EntidadClientes idCliente, boolean metodoPreferido) {
+		
+		super(propietarioMetodo, idCliente, metodoPreferido);
+		this.emailCuentaPayPal = emailCuentaPayPal;
+		
+	}
 
 	@Override
 	public String getTipoPago() {
-		
+
 		return "PAYPAL";
 		
 	}

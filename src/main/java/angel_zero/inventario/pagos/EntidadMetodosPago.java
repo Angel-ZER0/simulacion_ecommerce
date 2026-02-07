@@ -44,7 +44,7 @@ public abstract class EntidadMetodosPago {
 	@Column(nullable = false)
 	private String propietarioMetodo;
 	
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private String calleFacturacionMetodo;
 	
 	@ManyToOne
@@ -63,7 +63,15 @@ public abstract class EntidadMetodosPago {
 		this.idCliente = idCliente;
 		this.metodoPreferido = metodoPreferido;
 	}
-
+	
+	public EntidadMetodosPago(String propietarioMetodo, EntidadClientes idCliente, boolean metodoPreferido) {
+		
+		this.propietarioMetodo = propietarioMetodo;
+		this.idCliente = idCliente;
+		this.metodoPreferido = metodoPreferido;
+		
+	}
+	
 	/*
 	public void verificarExpiracion(YearMonth fecha) {
 		
